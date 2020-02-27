@@ -23,7 +23,6 @@ int main () {
 		size_t line_len = line_in.size();
 		string line = line_in;
 
-		bool error = false;
 		string errorMessage = "";
 		size_t num_of_ats = 0;
 
@@ -63,6 +62,7 @@ int main () {
 				// throw error: unrecognized character
 			}
 
+			
 			// use substring to check for _at_ and _dot_
 
 			while (true) {
@@ -73,7 +73,6 @@ int main () {
 				if (found != string::npos) {
 					line.replace(found, 4, "@");
 					found_at = true;
-					num_of_ats++;
 				}
 			
 				found = line.find("_dot_");
@@ -84,21 +83,36 @@ int main () {
 
 				if (!found_at && !found_dot) 
 				{
-					if (num_of_ats < 1) {
-						error = true;
-						errorMessage = "too many '@'s.";
-					}
 					break;
 				}
 
 			}
+			
+
+			// check final string for correct number of @'s
+			size_t num_ats = 0;
+			string line_copy = line;
+			while (true) {
+				size_t found = line_copy.find("@");
+				if (found != string::npos) {
+					num_ats++;
+					line_copy.erase(found, 1);
+				}
+				else break;
+			}
+			if (num_ats > 1) {
+				errorMessage = "too many '@'s";
+			}
+			else if (num_ats < 1) {
+				errorMessage = "missing @";
+			}
 
 			// error handling
-			if (error) {
+			if (errorMessage != "") {
 				line = line_in + " <-- " + errorMessage;
 				break;
 			}
-
+			
 		}
 
 	output.push_back(line);
