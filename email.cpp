@@ -23,6 +23,10 @@ int main () {
 		size_t line_len = line_in.size();
 		string line = line_in;
 
+		bool error = false;
+		string errorMessage = "";
+		size_t num_of_ats = 0;
+
 		if (line == "Done") {
 			break;
 		}
@@ -60,7 +64,8 @@ int main () {
 			}
 
 			// use substring to check for _at_ and _dot_
-			// while (true) {
+
+			while (true) {
 
 				bool found_at = false, found_dot = false;
 
@@ -68,6 +73,7 @@ int main () {
 				if (found != string::npos) {
 					line.replace(found, 4, "@");
 					found_at = true;
+					num_of_ats++;
 				}
 			
 				found = line.find("_dot_");
@@ -76,11 +82,22 @@ int main () {
 					found_dot = true;
 				}
 
-				if (!found_at && !found_dot) break;
+				if (!found_at && !found_dot) 
+				{
+					if (num_of_ats < 1) {
+						error = true;
+						errorMessage = "too many '@'s.";
+					}
+					break;
+				}
 
-			// }
+			}
 
-			
+			// error handling
+			if (error) {
+				line = line_in + " <-- " + errorMessage;
+				break;
+			}
 
 		}
 
